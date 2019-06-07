@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ROUTE_PLANNER_H
+#define ROUTE_PLANNER_H
 
 #include <iostream>
 #include <vector>
@@ -15,3 +16,5 @@ class RoutePlanner {
     // Add private variables or methods declarations here.
     RouteModel &m_Model;
 };
+
+#endif
