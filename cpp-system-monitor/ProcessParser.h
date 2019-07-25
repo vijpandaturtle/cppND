@@ -109,10 +109,24 @@ string ProcessParser::getProcUpTime(string pid) {
   string line;
   string value;
   float result;
-  
+  //opening stream for result
+  ifstream stream = Util::getStream((Path::basePath() + pid + "/" + Path::statPath()));
+  getline(stream, line);
+  string str = line;
+  istringstream buf(str);
+  vector<string> values(beg, end);
+  //using sysconf to get clockticks of the host machine
+  float freq = sysconf(_SC_CLK_TCK);
+  return to_string(stof(values[13])/freq);
 }
 
 
 long int ProcessParser::getSysUpTime() {
-
+  string line;
+  ifstream stream = Util::getStream((Path::basePath() + Path::upTimePath());
+  getStream(stream, line);
+  istringstream buf(line);
+  istream_iterator<string> buf(beg), end;
+  vector<string> values(beg, end);
+  return stoi(values[0]);
 }
