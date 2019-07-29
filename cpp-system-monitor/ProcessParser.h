@@ -48,13 +48,9 @@ private:
 // TODO: Define all of the above functions below:
 string ProcessParser::getCmd(string pid) {
   string line;
-  //Declaring search attribute for file
-  string name = "Cmd";
-  string value;
-}
-
-vector<string> ProcessParser::getPidList() {
-
+  ifstream stream = Util::getStream((Path::basePath() + pid + Path::cmdPath()));
+  std::getline(stream, line);
+  return line;
 }
 
 string ProcessParser::getVmSize(string pid) {
