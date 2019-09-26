@@ -177,3 +177,59 @@ vector<string> ProcessParser::getPidList() {
       throw std::runtime_error(std::strerror(errno));
   return container;
 }
+
+int ProcessParser::getNumberOfCores() {
+  //get number of host cpu cores
+  string line;
+  string name = "cpu cores";
+  ifstream stream = Util::getStream((Path::basePath() + "cpuinfo"));
+  while(std::getline(stream, line)) {
+    if(line.compare(0, name.size(), name) == 0) {
+      istringstream buf(line);
+      istream_iterator<string> buf(beg), end;
+      vector<string> values(beg, end);
+      return stoi(values[3]);
+    }
+  }
+  return 0;
+}
+
+vector<string> ProcessParser::getSysCpuPercent(string coreNumber) {
+  string line;
+  string name = "cpu" + coreNumber;
+  ifstream stream = Util::getStream((Path::basePath() + Path::statPath()));
+  while(std::getline(stream, line)) {
+    if(line.compare(0, name.size(), name) == 0) {
+      istringstream buf(line);
+      istream_iterator<string> beg(buf), end;
+      vector<string> values(beg, end);
+      return values;
+    }
+  }
+  return (vector<string>());
+}
+
+float get_sys_active_cpu_time(vector<string> values) {
+  return (stof(values[S_USER]) +
+            stof(values[S_NICE]) +
+            stof(values[S_SYSTEM]) +
+            stof(values[S_IRQ]) +
+            stof(values[S_SOFTIRQ]) +
+            stof(values[S_STEAL]) +
+            stof(values[S_GUEST]) +
+            stof(values[S_GUEST_NICE]));
+}
+
+float get_sys_idle_cpu_time(vector<string>values)
+{
+    return (stof(values[S_IDLE]) + stof(values[S_IOWAIT]));
+}
+
+std::string ProcessParser::PrintCpuStats(std::vector<std::string> values1, std::vector<std::string> values2)
+{
+  float active_time = getSysActiveCpuTime(values2) - getSysActiveCpuTime(values1);
+  float idle_time = getSysIdleCpuTime(values2) - getSysIdleCpuTime(values1);
+  float total_time = active_time + idle_time;
+  float result = 100.0 * (active_time / total_time);
+  return std::to_string(result);
+}
