@@ -22,9 +22,9 @@ private:
     T *addr;
     /*  isArray is true if this Pointer points
         to an allocated array. It is false
-        otherwise. 
+        otherwise.
     */
-    bool isArray; 
+    bool isArray;
     // true if pointing to array
     // If this Pointer is pointing to an allocated
     // array, then arraySize contains its size.
@@ -108,21 +108,37 @@ Pointer<T,size>::Pointer(T *t){
 
     // TODO: Implement Pointer constructor
     // Lab: Smart Pointer Project Lab
-
+    typename std::list<PtrDetails<T>>::iterator p = findPtrInfo(t);
+    if(p == refContainer.end()) {
+      PtrDetails<T> newPtr(t, size);
+      if(size > 0) {
+        isArray = true;
+        arraySize = size;
+      }
+      refContainer.push_back(newPtr);
+    }else{
+      p->refcount++;
+    }
+    this->addr = t;
 }
+
 // Copy constructor.
 template< class T, int size>
 Pointer<T,size>::Pointer(const Pointer &ob){
 
     // TODO: Implement Pointer constructor
     // Lab: Smart Pointer Project Lab
-
+    typename std::list<PtrDetails<T>>::iterator p = findPtrInfo(ob.addr);
+    p->refcount++;
+    this->isArray = ob.isArray;
+    this->arraySize = ob.ArraySize;
+    this->addr = ob.addr;
 }
 
 // Destructor for Pointer.
 template <class T, int size>
 Pointer<T, size>::~Pointer(){
-    
+
     // TODO: Implement Pointer destructor
     // Lab: New and Delete Project Lab
 }
